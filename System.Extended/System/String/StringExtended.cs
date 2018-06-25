@@ -28,27 +28,25 @@ namespace System
         /// Получение хэша по заданному алгоритму.
         /// </summary>
         /// <param name="value">Строка, для которой нужно получить хэш значение.</param>
-        /// <param name="hash">Алгоритм получения хэша.</param>
+        /// <param name="hash">Хэш алгоритм.</param>
         /// <param name="encoding">Кодировка, дефолтное значение: UTF8.</param>
         /// <returns></returns>
         public static byte[] GetHash(this string value, HashAlgorithm hash, Encoding encoding = null)
         {
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
-            if (hash == null)
-                throw new ArgumentNullException(nameof(hash));
 
             if (encoding == null)
                 encoding = Encoding.UTF8;
 
-            return hash.ComputeHash(encoding.GetBytes(value));
+            return encoding.GetBytes(value).GetHash(hash);
         }
 
         /// <summary>
         /// Получение хэша по заданному алгоритму в виде строки.
         /// </summary>
         /// <param name="value">Строка, для которой нужно получить хэш значение.</param>
-        /// <param name="hash">Алгоритм получения хэша.</param>
+        /// <param name="hash">Хэш алгоритм.</param>
         /// <param name="encoding">Кодировка, дефолтное значение: UTF8.</param>
         /// <returns></returns>
         public static string GetStringHash(this string value, HashAlgorithm hash, Encoding encoding = null)

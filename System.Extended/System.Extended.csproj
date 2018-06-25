@@ -43,6 +43,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="System\Attribute\AttributeExtended.cs" />
     <Compile Include="System\Attribute\GetAttributeType.cs" />
+    <Compile Include="System\Byte\ByteExtended.cs" />
     <Compile Include="System\String\StringExtended.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
