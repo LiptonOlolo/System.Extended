@@ -26,5 +26,21 @@ namespace System.Linq
                 foreach (var item in sub)
                     yield return selector(item);
         }
+
+        /// <summary>
+        /// Проецирует каждый элемент всех последовательностей в 1 последовательность.
+        /// </summary>
+        /// <typeparam name="TSource">Тип элементов source.</typeparam>
+        /// <param name="source">Последовательность значений, которые следует проецировать.</param>
+        /// <returns></returns>
+        public static IEnumerable<TSource> SelectMany<TSource>(this IEnumerable<IEnumerable<TSource>> source)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            foreach (var sub in source)
+                foreach (var item in sub)
+                    yield return item;
+        }
     }
 }
