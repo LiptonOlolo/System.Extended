@@ -1,5 +1,68 @@
 # System.Extended
 
+### LinqExtended
+Объявим тестовый класс, содержащий 2 числа:
+```C#
+class Test
+{
+    public Test(int a, int b)
+    {
+        A = a;
+        B = b;
+    }
+
+    public int A { get; set; }
+
+    public int B { get; set; }
+}
+```
+
+Объявим массив массивов:
+```C#
+Test[][] tests = new Test[][]
+{
+    new Test[] {
+        new Test(2, 2),
+        new Test(2, 3)
+    },
+    new Test[] {
+        new Test(3, 3),
+        new Test(3, 4)
+    }
+};
+```
+
+Чтобы получить сумму всех A + B в стандартном Linq прийдется написать:
+```C#
+tests.Sum(x => x.Sum(u => u.A + u.B));
+```
+А с LinqExtended:
+```C#
+tests.SelectMany(x => x.A + x.B).Sum();
+```
+
+Или, например, необходимо получить 1 последовательность из всего массива:
+System.Linq:
+```C#
+tests.SelectMany(x => x.Select(u => u));
+```
+
+LinqExtended:
+```C#
+tests.SelectMany();
+```
+
+Получим значения всех полей А:
+System.Linq:
+```C#
+tests.SelectMany(x => x.Select(u => u.A));
+```
+
+LinqExtended:
+```C#
+tests.SelectMany(x => x.A);
+```
+
 ### StringExtended
 Объявим текстовую переменную:
 ```C#
