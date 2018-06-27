@@ -1,0 +1,10 @@
+C:\Users\Alexandr\source\repos\System.Extended\Tests\bin\Debug\Tests.exe.config
+C:\Users\Alexandr\source\repos\System.Extended\Tests\bin\Debug\Tests.exe
+C:\Users\Alexandr\source\repos\System.Extended\Tests\bin\Debug\Tests.pdb
+C:\Users\Alexandr\source\repos\System.Extended\Tests\bin\Debug\System.Extended.dll
+C:\Users\Alexandr\source\repos\System.Extended\Tests\bin\Debug\System.Extended.pdb
+C:\Users\Alexandr\source\repos\System.Extended\Tests\obj\Debug\Tests.csprojAssemblyReference.cache
+C:\Users\Alexandr\source\repos\System.Extended\Tests\obj\Debug\Tests.csproj.CoreCompileInputs.cache
+C:\Users\Alexandr\source\repos\System.Extended\Tests\obj\Debug\Tests.csproj.CopyComplete
+C:\Users\Alexandr\source\repos\System.Extended\Tests\obj\Debug\Tests.exe
+C:\Users\Alexandr\source\repos\System.Extended\Tests\obj\Debug\Tests.pdb

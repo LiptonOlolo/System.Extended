@@ -1,0 +1,5 @@
+C:\Users\Alexandr\source\repos\System.Extended\System.Extended\bin\Debug\System.Extended.dll
+C:\Users\Alexandr\source\repos\System.Extended\System.Extended\bin\Debug\System.Extended.pdb
+C:\Users\Alexandr\source\repos\System.Extended\System.Extended\obj\Debug\System.Extended.csproj.CoreCompileInputs.cache
+C:\Users\Alexandr\source\repos\System.Extended\System.Extended\obj\Debug\System.Extended.dll
+C:\Users\Alexandr\source\repos\System.Extended\System.Extended\obj\Debug\System.Extended.pdb
