@@ -41,11 +41,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="System\LINQ\LinqExtended.cs" />
-    <Compile Include="System\Attribute\AttributeExtended.cs" />
+    <Compile Include="System\LINQ\LinqExtenstion.cs" />
+    <Compile Include="System\Attribute\AttributeExtenstion.cs" />
     <Compile Include="System\Attribute\GetAttributeType.cs" />
-    <Compile Include="System\Byte\ByteExtended.cs" />
-    <Compile Include="System\String\StringExtended.cs" />
+    <Compile Include="System\Byte\ByteExtenstion.cs" />
+    <Compile Include="System\String\StringExtenstion.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

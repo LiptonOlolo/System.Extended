@@ -1,5 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace Tests
 {
@@ -7,28 +9,35 @@ namespace Tests
     {
         static void Main(string[] args)
         {
-            Test[][] tests = new Test[][]
-            {
-                new Test[] {
-                    new Test(2, 2),
-                    new Test(2, 3)
-                },
-                new Test[] {
-                    new Test(3, 3),
-                    new Test(3, 4)
-                }
-            };
+            Console.WriteLine("Attributes");
+            Test test = new Test(0, 0);
+            Console.WriteLine(test.GetAttribute<DescriptionAttribute>(null, GetAttributeType.Class).Description);
+            Console.WriteLine(test.GetAttribute<DescriptionAttribute>(nameof(Test.A), GetAttributeType.Property).Description);
+            Console.WriteLine(test.GetAttribute<DescriptionAttribute>(nameof(Test.B), GetAttributeType.Property).Description);
+            Console.WriteLine(test.GetAttribute<DescriptionAttribute>(nameof(Test.Foo), GetAttributeType.Method).Description);
+            Console.WriteLine(test.GetAttribute<DescriptionAttribute>(nameof(Test.a), GetAttributeType.Field).Description);
+            Console.WriteLine();
 
+            Console.WriteLine("Byte");
+            Console.WriteLine(string.Join(" ", Guid.NewGuid().ToByteArray().GetHash(MD5.Create())));
+            Console.WriteLine();
 
-            var res1 = tests.SelectMany(x => x.A);
+            Console.WriteLine("String");
+            Console.WriteLine("".IsEmpty() ? "Строка пустая" : "Строка не пустая");
+            Console.WriteLine("Hello, world!".IsMatch(".") ? "Строка соответствует паттерну" : "Строка не соответствует паттерну");
+            Console.WriteLine($"md5(\"Hello, World!\") = {"\"Hello, World\"".GetStringHash(MD5.Create())}");
+            Console.WriteLine("md5(\"Hello, World!\") = " + string.Join(" ", "\"Hello, World\"".GetHash(MD5.Create())));
+            Console.WriteLine();
 
-            foreach (var item in res1)
-            {
-                Console.WriteLine(item);
-            }
+            Console.WriteLine("Linq");
+            int localArg = 0;
+            LinqExtenstion.CreateMany<Test>(5, 0, 0) //5 Test с A = 0 & B = 0
+                           .Select(x => new Test(++localArg, localArg)) //Новые Test с новыми A & B
+                           .ForEach(x => Console.WriteLine($"A = {x.A}, B = {x.B}")); //ForEach используется без .ToList() (!)
         }
     }
 
+    [Description("Test class")]
     class Test
     {
         public Test(int a, int b)
@@ -37,8 +46,19 @@ namespace Tests
             B = b;
         }
 
+        [Description("A property")]
         public int A { get; set; }
 
+        [Description("B property")]
         public int B { get; set; }
+
+        [Description("Foo method")]
+        public void Foo()
+        {
+
+        }
+
+        [Description("a field")]
+        public int a;
     }
 }
