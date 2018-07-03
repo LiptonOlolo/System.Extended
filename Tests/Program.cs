@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Security.Cryptography;
@@ -30,10 +31,20 @@ namespace Tests
             Console.WriteLine();
 
             Console.WriteLine("Linq");
-            int localArg = 0;
+            int local = 0;
             LinqExtenstion.CreateMany<Test>(5, 0, 0) //5 Test с A = 0 & B = 0
-                           .Select(x => new Test(++localArg, localArg)) //Новые Test с новыми A & B
-                           .ForEach(x => Console.WriteLine($"A = {x.A}, B = {x.B}")); //ForEach используется без .ToList() (!)
+                          .Pipe(x => { x.A += ++local; x.B++; }) //Добавляем +1 значение св-вам A & B
+                          .ForEach(x => Console.WriteLine($"A = {x.A}, B = {x.B}")); //ForEach используется без .ToList() (!)
+
+            Enumerable.Range(0, 5).Append(666).ForEach(x => Console.WriteLine(x)); //Добавить объект в последовательность
+
+            LinqExtenstion.CreateMany<Test>(4, 0, 0)
+                          .Pipe(x => x.A++) //Каждому св-ву A прибавляем +1
+                          .ForEach(x => Console.WriteLine(x.A));
+
+            IEnumerable<int> oneInt = LinqExtenstion.Create(10); //Создаем последовательность из 1 объекта
+
+            Console.ReadKey();
         }
     }
 
