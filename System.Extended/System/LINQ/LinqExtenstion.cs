@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 
 namespace System.Linq
 {
@@ -7,6 +8,140 @@ namespace System.Linq
     /// </summary>
     public static class LinqExtenstion
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="separator"></param>
+        /// <returns></returns>
+        public static string Join<T>(this IEnumerable<T> source, string separator)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            
+            separator = separator ?? string.Empty;
+
+            StringBuilder sb = new StringBuilder();
+
+            var en = source.GetEnumerator();
+
+            if (!en.MoveNext())
+                return string.Empty;
+
+            if (en.Current != null)
+                sb.Append(en.Current);
+
+            while (en.MoveNext())
+            {
+                sb.Append(separator);
+                if (en.Current != null)
+                    sb.Append(en.Current);
+            }
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Разделяет данную последовательность на куски заданного размера. Если длина последовательности не равномерно делится на размер куска, последний фрагмент будет содержать все остальные элементы.
+        /// </summary>
+        /// <typeparam name="T">Тип.</typeparam>
+        /// <param name="source">Последовательность.</param>
+        /// <param name="chunkSize">Размер куска.</param>
+        /// <returns></returns>
+        public static IEnumerable<T[]> Chunk<T>(this IEnumerable<T> source, int chunkSize)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (chunkSize <= 0)
+                throw new ArgumentException(nameof(chunkSize));
+
+            T[] chunk = null;
+            int index = 0;
+
+            foreach (var item in source)
+            {
+                chunk = chunk ?? new T[chunkSize];
+                chunk[index++] = item;
+
+                if (index == chunkSize)
+                {
+                    yield return chunk;
+                    index = 0;
+                    chunk = null;
+                }
+            }
+
+            if (chunk != null)
+            {
+                var lastChunk = new T[index];
+                Array.Copy(chunk, lastChunk, index);
+
+                yield return lastChunk;
+            }
+        }
+
+        /// <summary>
+        /// Берет указанное количество элементов, затем пропускает указанное количество элементов.
+        /// </summary>
+        /// <typeparam name="T">Тип.</typeparam>
+        /// <param name="source">Последовательность.</param>
+        /// <param name="take">Количество элементов, которые будут взяты до пропуска.</param>
+        /// <param name="skip">Количество элементов, которые будут пропущены.</param>
+        /// <returns></returns>
+        public static IEnumerable<T> TakeSkip<T>(this IEnumerable<T> source, int take, int skip)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (take <= 0)
+                throw new ArgumentException(nameof(take));
+            if (skip < 0)
+                throw new ArgumentException(nameof(skip));
+
+            var en = source.GetEnumerator();
+
+            while (true)
+            {
+                for (int i = 0; i < take; i++)
+                {
+                    if (!en.MoveNext())
+                        yield break;
+
+                    yield return en.Current;
+                }
+
+                for (int i = 0; i < skip; i++)
+                {
+                    if (!en.MoveNext())
+                        yield break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Возвращает новую последовательность, которая содержит все входные элементы в случайном порядке.
+        /// </summary>
+        /// <typeparam name="T">Тип.</typeparam>
+        /// <param name="source">Последовательность.</param>
+        /// <returns></returns>
+        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source) => source.OrderBy(x => Guid.NewGuid());
+
+        /// <summary>
+        /// Определяет, содержит ли последовательность какие-либо элементы, либо последовательность равна null.
+        /// </summary>
+        /// <typeparam name="T">Тип.</typeparam>
+        /// <param name="source">Последовательность.</param>
+        /// <returns></returns>
+        public static bool IsNullOrEmpty<T>(this IEnumerable<T> source) => source == null || !source.Any();
+
+        /// <summary>
+        /// Определяет, содержит ли последовательность какие-либо элементы.
+        /// </summary>
+        /// <typeparam name="T">Тип.</typeparam>
+        /// <param name="source">Последовательность</param>
+        /// <returns></returns>
+        public static bool IsEmpty<T>(this IEnumerable<T> source) => !source.Any();
+
         /// <summary>
         /// Выполняет указанное действие с каждым элементом списка и возвращает этот же список.
         /// </summary>
@@ -41,7 +176,7 @@ namespace System.Linq
             if (item == null)
                 throw new ArgumentNullException(nameof(item));
 
-            return source.Concat(Create(item));
+            return source.Concat(item.Create());
         }
 
         /// <summary>

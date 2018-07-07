@@ -36,13 +36,19 @@ namespace Tests
                           .Pipe(x => { x.A += ++local; x.B++; }) //Добавляем +1 значение св-вам A & B
                           .ForEach(x => Console.WriteLine($"A = {x.A}, B = {x.B}")); //ForEach используется без .ToList() (!)
 
-            Enumerable.Range(0, 5).Append(666).ForEach(x => Console.WriteLine(x)); //Добавить объект в последовательность
+            Enumerable.Range(0, 5).Append(666).ForEach(Console.WriteLine); //Добавить объект в последовательность
 
             LinqExtenstion.CreateMany<Test>(4, 0, 0)
                           .Pipe(x => x.A++) //Каждому св-ву A прибавляем +1
                           .ForEach(x => Console.WriteLine(x.A));
 
             IEnumerable<int> oneInt = LinqExtenstion.Create(10); //Создаем последовательность из 1 объекта
+
+            Console.WriteLine(oneInt.IsEmpty()); //Проверка на наличие элементов.
+            Console.WriteLine((null as int[]).IsNullOrEmpty()); //Проверка на null или наличие элементов.
+            Console.WriteLine(Enumerable.Range(0, 10).Shuffle().Join(",")); //Сортировка в случайном порядке, объединение всей последовательности в одну (новый метод Join).
+            Enumerable.Range(0, 10).Chunk(3).ForEach(x => Console.WriteLine(x.Join(","))); //Генерируем последовательность от 0 до 9, разбиваем на 4 части по 3 эл-та (int[][]).
+            Enumerable.Range(0, 10).TakeSkip(1, 1).ForEach(Console.WriteLine); //Берем 1 элемент, после него пропускаем 1 элемент и так до конца последовательности (в данном примере получается каждый 2-ой элемент).
 
             Console.ReadKey();
         }
