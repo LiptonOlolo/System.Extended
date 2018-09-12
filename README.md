@@ -1,53 +1,50 @@
 # System.Extended
 
-### LinqExtenstions
 ```C#
-IEnumerable<Test> tests = LinqExtenstions.CreateMany<Test>(10); // => создаст коллекцию класса Test, создержащую 10 экземпляров класса Test (класс описан ниже).
-IEnumerable<Test> testsWithCtor = LinqExtenstions.CreateMany<Test>(10, "Hello"); // => создаст коллекцию класса Test, создержащую 10 экземпляров класса Test, но при этом используя конструктор Test(string) (класс описан ниже).
-
-tests.ForEach(x => Console.WriteLine(x.Git)); // => использование ForEach без .ToList()
-```
-
-Добавлен метод SelectMany для работы с массивами массивов, или IEnumerable<IEnumerable<T>>
-
-### StringExtenstions
-```C#
-string git = "hub";
-
-Console.WriteLine(git.IsEmpty()); // => False
-Console.WriteLine(git.IsMatch(".")); // => True
-
-Console.WriteLine(git.GetStringHash(MD5.Create())); // => 5261539CAB7DE0487B6B41415ACC7F61
-```
-
-### AttribyteExtenstions
-Опишем тестовый класс:
-```C#
-[Description("Hello")]
+[Description("Test class")]
 class Test
 {
-    public Test(string git) { Git = git; }
-    public Test() {}
+    public Test()
+    {
+    }
 
-    [Description("field description")]
-    public string test;
+    [Description("A property")]
+    public int A { get; set; }
 
-    [Description("Git")]
-    public string Git { get; set; }
+    [Description("B property")]
+    public int B { get; set; }
 
-    [Description("Hub")]
-    public void Hub()
+    [Description("Foo method")]
+    public void Foo()
     {
 
     }
+
+    [Description("a field")]
+    public int a;
 }
 
 Test test = new Test();
-var classDescription = test.GetAttribute<DescriptionAttribute>(null, GetAttributeType.Class);
-var fieldDescription = test.GetAttribute<DescriptionAttribute>(nameof(Test.test), GetAttributeType.Field);
-var propDescription = test.GetAttribute<DescriptionAttribute>(nameof(Test.Git), GetAttributeType.Property);
-var methodDescription = test.GetAttribute<DescriptionAttribute>(nameof(Test.Hub), GetAttributeType.Method);
+test.GetAttribute<DescriptionAttribute>(null, GetAttributeType.Class).Description;
+test.GetAttribute<DescriptionAttribute>(nameof(Test.A), GetAttributeType.Property).Description;
+test.GetAttribute<DescriptionAttribute>(nameof(Test.B), GetAttributeType.Property).Description;
+test.GetAttribute<DescriptionAttribute>(nameof(Test.Foo), GetAttributeType.Method).Description;
+test.GetAttribute<DescriptionAttribute>(nameof(Test.a), GetAttributeType.Field).Description;
 
-Console.WriteLine($"{classDescription.Description} {propDescription.Description}{methodDescription.Description}"); // => Hello GitHub
-Console.WriteLine(fieldDescription.Description); // => field description
+Guid.NewGuid().ToByteArray().GetHash(MD5.Create()).Join(" ");
+
+"".IsEmpty() ? "Строка пустая" : "Строка не пустая";
+"Hello, world!".IsMatch(".") ? "Строка соответствует паттерну" : "Строка не соответствует паттерну";
+$"md5(\"Hello, World!\") = {"\"Hello, World\"".GetStringHash(MD5.Create())}");
+"md5(\"Hello, World!\") = " + string.Join(" ", "\"Hello, World\"".GetHash(MD5.Create()));
+
+Enumerable.Range(0, 5).Append(666).ForEach(Console.WriteLine); //Добавить объект в последовательность
+IEnumerable<int> oneInt = LinqExtenstion.Create(10); //Создаем последовательность из 1 объекта
+
+oneInt.IsEmpty(); //Проверка на наличие элементов.
+List<int> list = null;
+list.IsNullOrEmpty(); //Проверка на null или наличие элементов.
+Enumerable.Range(0, 10).Shuffle().Join(",")); //Сортировка в случайном порядке, объединение всей последовательности в одну.
+Enumerable.Range(0, 10).Chunk(2).ForEach(x => Console.WriteLine(x.Join(","))); //Генерируем последовательность от 0 до 9, разбиваем на 4 части по 3 эл-та (IEnumerable<IEnumerable<int>>).
+Enumerable.Range(0, 10).TakeSkip(1, 1).ForEach(Console.WriteLine); //Берем 1 элемент, после него пропускаем 1 элемент и так до конца последовательности (в данном примере получается каждый 2-ой элемент).
 ```
