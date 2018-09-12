@@ -4,21 +4,51 @@ using System.Reflection;
 namespace System
 {
     /// <summary>
-    /// Получение атрибутов объекта.
+    /// Getting attributes.
+    /// <para/>
+    /// Получение атрибутов.
     /// </summary>
     public static class AttributeExtenstion
     {
         /// <summary>
-        /// Получение атрибута у класса, поля, свойства или метода..
+        /// Getting attribute from class, field, property, method.
+        /// <para/>
+        /// Получение атрибута у класса, поля, свойства или метода.
         /// </summary>
-        /// <typeparam name="T">Тип атрибута.</typeparam>
-        /// <param name="value">Объект.</param>
+        /// 
+        /// <typeparam name="T">
+        /// Attribute type.
+        /// <para/>
+        /// Тип атрибута.
+        /// </typeparam>
+        /// 
+        /// <param name="value">
+        /// Object.
+        /// <para/>
+        /// Объект.
+        /// </param>
+        /// 
         /// <param name="name">
-        /// Имя поля, свойства или метода, из которого необходимо получить атрибут.
+        /// Name field, property or method.
+        /// <para/>
+        /// If get a class attribute = null.
+        /// <para/>
+        /// Имя поля, свойства или метода.
+        /// <para/>
         /// Если необходимо получить атрибут класса, то можно передать null.
         /// </param>
-        /// <param name="getType">Тип получения атрибута, из класса, поля, свойства или метода.</param>
-        /// <returns></returns>
+        /// 
+        /// <param name="getType">
+        /// Getting type: class, field, property or method.
+        /// <para/>
+        /// Тип получения: из класса, поля, свойства или метода.
+        /// </param>
+        /// 
+        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="MissingFieldException"/>
+        /// <exception cref="MissingMemberException"/>
+        /// <exception cref="MissingMethodException"/>
+        /// <exception cref="InvalidOperationException"/>
         public static T GetAttribute<T>(this object value, string name, GetAttributeType getType) where T : Attribute
         {
             if (value == null)
@@ -37,16 +67,18 @@ namespace System
                     break;
 
                 case GetAttributeType.Field:
-                    info = type.GetField(name);
+                    info = type.GetField(name) ?? throw new MissingFieldException();
                     break;
 
                 case GetAttributeType.Property:
-                    info = type.GetProperty(name);
+                    info = type.GetProperty(name) ?? throw new MissingMemberException();
                     break;
 
                 case GetAttributeType.Method:
-                    info = type.GetMethod(name);
+                    info = type.GetMethod(name) ?? throw new MissingMethodException();
                     break;
+
+                default: throw new InvalidOperationException();
             }
 
             return (T)info.GetCustomAttributes(typeof(T), false).FirstOrDefault();

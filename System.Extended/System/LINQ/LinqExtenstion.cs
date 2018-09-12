@@ -1,58 +1,77 @@
 ﻿using System.Collections.Generic;
-using System.Text;
 
 namespace System.Linq
 {
     /// <summary>
-    /// Расширения для IEnumerable
+    /// Extensions for IEnumerable.
+    /// <para/>
+    /// Расширения для IEnumerable.
     /// </summary>
     public static class LinqExtenstion
     {
         /// <summary>
-        /// 
+        /// Joining collection in 1 string.
+        /// <para/>
+        /// Объединяет всю коллекцию в 1 строку с разделителем.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="separator"></param>
-        /// <returns></returns>
+        /// 
+        /// <typeparam name="T">
+        /// Collection type.
+        /// <para/>
+        /// Тип коллекции.
+        /// </typeparam>
+        /// 
+        /// <param name="source">
+        /// Collection.
+        /// <para/>
+        /// Коллекция.
+        /// </param>
+        /// 
+        /// <param name="separator">
+        /// Separator.
+        /// <para/>
+        /// Разделитель.
+        /// </param>
+        /// 
+        /// <exception cref="ArgumentNullException"/>
         public static string Join<T>(this IEnumerable<T> source, string separator)
         {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            
+            source = source ?? throw new ArgumentNullException(nameof(source));
+
             separator = separator ?? string.Empty;
 
-            StringBuilder sb = new StringBuilder();
-
-            var en = source.GetEnumerator();
-
-            if (!en.MoveNext())
-                return string.Empty;
-
-            if (en.Current != null)
-                sb.Append(en.Current);
-
-            while (en.MoveNext())
-            {
-                sb.Append(separator);
-                if (en.Current != null)
-                    sb.Append(en.Current);
-            }
-
-            return sb.ToString();
+            return string.Join(separator, source);
         }
 
         /// <summary>
-        /// Разделяет данную последовательность на куски заданного размера. Если длина последовательности не равномерно делится на размер куска, последний фрагмент будет содержать все остальные элементы.
+        /// Split collection on chunks.
+        /// <para/>
+        /// Разделяет коллекцию на куски.
         /// </summary>
-        /// <typeparam name="T">Тип.</typeparam>
-        /// <param name="source">Последовательность.</param>
-        /// <param name="chunkSize">Размер куска.</param>
-        /// <returns></returns>
-        public static IEnumerable<T[]> Chunk<T>(this IEnumerable<T> source, int chunkSize)
+        /// 
+        /// <typeparam name="T">
+        /// Collection type.
+        /// <para/>
+        /// Тип коллекции.
+        /// </typeparam>
+        /// 
+        /// <param name="source">
+        /// Collection.
+        /// <para/>
+        /// Коллекция.
+        /// </param>
+        /// 
+        /// <param name="chunkSize">
+        /// Chunk size.
+        /// <para/>
+        /// Размер куска.
+        /// </param>
+        /// 
+        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="ArgumentException"/>
+        public static IEnumerable<IEnumerable<T>> Chunk<T>(this IEnumerable<T> source, int chunkSize)
         {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
+            source = source ?? throw new ArgumentNullException(nameof(source));
             if (chunkSize <= 0)
                 throw new ArgumentException(nameof(chunkSize));
 
@@ -82,17 +101,276 @@ namespace System.Linq
         }
 
         /// <summary>
+        /// Shuffle all items.
+        /// <para/>
+        /// Возвращает коллекцию, которая содержит все элементы в случайном порядке.
+        /// </summary>
+        /// 
+        /// <typeparam name="T">
+        /// Collection type.
+        /// <para/>
+        /// Тип коллекции.
+        /// </typeparam>
+        /// 
+        /// <param name="source">
+        /// Collection.
+        /// <para/>
+        /// Коллекция.
+        /// </param>
+        /// <exception cref="ArgumentNullException"/>
+        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source)
+        {
+            source = source ?? throw new ArgumentNullException(nameof(source));
+
+            return source.OrderBy(x => Guid.NewGuid());
+        }
+
+        /// <summary>
+        /// Check collection to empty or null.
+        /// <para/>
+        /// Определяет, содержит ли коллекция какие-либо элементы, либо коллекция равна null.
+        /// </summary>
+        /// 
+        /// <typeparam name="T">
+        /// Collection type.
+        /// <para/>
+        /// Тип коллекции.
+        /// </typeparam>
+        /// 
+        /// <param name="source">
+        /// Collection.
+        /// <para/>
+        /// Коллекция.
+        /// </param>
+        public static bool IsNullOrEmpty<T>(this IEnumerable<T> source) => source == null || !source.Any();
+
+        /// <summary>
+        /// Check collection to empty.
+        /// <para/>
+        /// Определяет, содержит ли коллекция какие-либо элементы.
+        /// </summary>
+        /// 
+        /// <typeparam name="T">
+        /// Collection type.
+        /// <para/>
+        /// Тип коллекции.
+        /// </typeparam>
+        /// 
+        /// <param name="source">
+        /// Collection.
+        /// <para/>
+        /// Коллекция.
+        /// </param>
+        /// <exception cref="ArgumentNullException"/>
+        public static bool IsEmpty<T>(this IEnumerable<T> source)
+        {
+            source = source ?? throw new ArgumentNullException(nameof(source));
+
+            return !source.Any();
+        }
+
+        /// <summary>
+        /// Performs the specified action on each item in the collection and returns the same list.
+        /// <para/>
+        /// Выполняет указанное действие с каждым элементом коллекции и возвращает этот же список.
+        /// </summary>
+        /// 
+        /// <typeparam name="T">
+        /// Collection type.
+        /// <para/>
+        /// Тип коллекции.
+        /// </typeparam>
+        /// 
+        /// <param name="source">
+        /// Collection.
+        /// <para/>
+        /// Коллекция.
+        /// </param>
+        /// 
+        /// <param name="action">
+        /// A delegate that runs for each item in the collection.
+        /// <para/>
+        /// Делегат, выполняемый для каждого элемента коллекции.
+        /// </param>
+        /// <exception cref="ArgumentNullException"/>
+        public static IEnumerable<T> Pipe<T>(this IEnumerable<T> source, Action<T> action)
+        {
+            source = source ?? throw new ArgumentNullException(nameof(source));
+            action = action ?? throw new ArgumentNullException(nameof(action));
+
+            foreach (var item in source)
+            {
+                action(item);
+                yield return item;
+            }
+        }
+
+        /// <summary>
+        /// Adding item to collection.
+        /// <para/>
+        /// Добавляет объект в коллекцию.
+        /// </summary>
+        /// 
+        /// <typeparam name="T">
+        /// Collection type.
+        /// <para/>
+        /// Тип коллекции.
+        /// </typeparam>
+        /// 
+        /// <param name="source">
+        /// Collection.
+        /// <para/>
+        /// Коллекция.
+        /// </param>
+        /// 
+        /// <param name="item">
+        /// Item.
+        /// <para/>
+        /// Объект.
+        /// </param>
+        /// 
+        /// <exception cref="ArgumentNullException"/>
+        public static IEnumerable<T> Append<T>(this IEnumerable<T> source, T item)
+        {
+            source = source ?? throw new ArgumentNullException(nameof(source));
+            if (item == null)
+                throw new ArgumentNullException(nameof(item));
+
+            return source.Concat(item.Create());
+        }
+
+        /// <summary>
+        /// Create collection from 1 item.
+        /// <para/>
+        /// Создает последовательность из 1 объекта.
+        /// </summary>
+        /// 
+        /// <typeparam name="T">
+        /// Collection type.
+        /// <para/>
+        /// Тип коллекции.
+        /// </typeparam>
+        /// 
+        /// <param name="item">
+        /// Item.
+        /// <para/>
+        /// Объект.
+        /// </param>
+        /// 
+        /// <exception cref="ArgumentNullException"/>
+        public static IEnumerable<T> Create<T>(this T item)
+        {
+            if (item == null)
+                throw new ArgumentNullException(nameof(item));
+
+            yield return item;
+        }
+
+        /// <summary>
+        /// Performs the specified action on each item in the collection.
+        /// <para/>
+        /// Выполняет указанное действие с каждым элементом коллекции.
+        /// </summary>
+        /// 
+        /// <typeparam name="T">
+        /// Collection type.
+        /// <para/>
+        /// Тип коллекции.
+        /// </typeparam>
+        /// 
+        /// <param name="source">
+        /// Collection.
+        /// <para/>
+        /// Коллекция.
+        /// </param>
+        /// 
+        /// <param name="action">
+        /// A delegate that runs for each item in the collection.
+        /// <para/>
+        /// Делегат, выполняемый для каждого элемента коллекции.
+        /// </param>
+        /// 
+        /// <exception cref="ArgumentNullException"/>
+        public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
+        {
+            source = source ?? throw new ArgumentNullException(nameof(source));
+            action = action ?? throw new ArgumentNullException(nameof(action));
+
+            foreach (var item in source)
+                action(item);
+        }
+
+        /// <summary>
+        /// Performs the specified action on each item in the collection.
+        /// <para/>
+        /// Выполняет указанное действие с каждым элементом коллекции.
+        /// </summary>
+        /// 
+        /// <typeparam name="T">
+        /// Collection type.
+        /// <para/>
+        /// Тип коллекции.
+        /// </typeparam>
+        /// 
+        /// <param name="source">
+        /// Collection.
+        /// <para/>
+        /// Коллекция.
+        /// </param>
+        /// 
+        /// <param name="action">
+        /// A delegate that runs for each item in the collection.
+        /// <para/>
+        /// Делегат, выполняемый для каждого элемента коллекции.
+        /// </param>
+        /// 
+        /// <exception cref="ArgumentNullException"/>
+        public static void ForEach<T>(this IEnumerable<T> source, Action<T, int> action)
+        {
+            source = source ?? throw new ArgumentNullException(nameof(source));
+            action = action ?? throw new ArgumentNullException(nameof(action));
+
+            int i = 0;
+            foreach (var item in source)
+                action(item, i++);
+        }
+
+        /// <summary>
+        /// Takes the specified number of elements, then skips the specified number of elements.
+        /// <para/>
         /// Берет указанное количество элементов, затем пропускает указанное количество элементов.
         /// </summary>
-        /// <typeparam name="T">Тип.</typeparam>
-        /// <param name="source">Последовательность.</param>
-        /// <param name="take">Количество элементов, которые будут взяты до пропуска.</param>
-        /// <param name="skip">Количество элементов, которые будут пропущены.</param>
-        /// <returns></returns>
+        /// 
+        /// <typeparam name="T">
+        /// Collection type.
+        /// <para/>
+        /// Тип коллекции.
+        /// </typeparam>
+        /// 
+        /// <param name="source">
+        /// Collection.
+        /// <para/>
+        /// Коллекция.
+        /// </param>
+        /// 
+        /// <param name="take">
+        /// The number of items to be taken before skipping.
+        /// <para/>
+        /// Количество элементов, которые будут взяты до пропуска.
+        /// </param>
+        /// 
+        /// <param name="skip">
+        /// Number of items to be skipped.
+        /// <para/>
+        /// Количество элементов, которые будут пропущены.
+        /// </param>
+        /// 
+        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="ArgumentException"/>
         public static IEnumerable<T> TakeSkip<T>(this IEnumerable<T> source, int take, int skip)
         {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
+            source = source ?? throw new ArgumentNullException(nameof(source));
+
             if (take <= 0)
                 throw new ArgumentException(nameof(take));
             if (skip < 0)
@@ -116,198 +394,6 @@ namespace System.Linq
                         yield break;
                 }
             }
-        }
-
-        /// <summary>
-        /// Возвращает новую последовательность, которая содержит все входные элементы в случайном порядке.
-        /// </summary>
-        /// <typeparam name="T">Тип.</typeparam>
-        /// <param name="source">Последовательность.</param>
-        /// <returns></returns>
-        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source) => source.OrderBy(x => Guid.NewGuid());
-
-        /// <summary>
-        /// Определяет, содержит ли последовательность какие-либо элементы, либо последовательность равна null.
-        /// </summary>
-        /// <typeparam name="T">Тип.</typeparam>
-        /// <param name="source">Последовательность.</param>
-        /// <returns></returns>
-        public static bool IsNullOrEmpty<T>(this IEnumerable<T> source) => source == null || !source.Any();
-
-        /// <summary>
-        /// Определяет, содержит ли последовательность какие-либо элементы.
-        /// </summary>
-        /// <typeparam name="T">Тип.</typeparam>
-        /// <param name="source">Последовательность</param>
-        /// <returns></returns>
-        public static bool IsEmpty<T>(this IEnumerable<T> source) => !source.Any();
-
-        /// <summary>
-        /// Выполняет указанное действие с каждым элементом списка и возвращает этот же список.
-        /// </summary>
-        /// <typeparam name="T">Тип элементов source.</typeparam>
-        /// <param name="source">Последовательность значений.</param>
-        /// <param name="action">Делегат, выполняемый для каждого элемента списка.</param>
-        public static IEnumerable<T> Pipe<T>(this IEnumerable<T> source, Action<T> action)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (action == null)
-                throw new ArgumentNullException(nameof(action));
-
-            foreach (var item in source)
-            {
-                action(item);
-                yield return item;
-            }
-        }
-
-        /// <summary>
-        /// Добавляет объект в последовательность.
-        /// </summary>
-        /// <typeparam name="T">Тип.</typeparam>
-        /// <param name="source">Коллекция, в которую будет добавлен объект.</param>
-        /// <param name="item">Объект.</param>
-        /// <returns></returns>
-        public static IEnumerable<T> Append<T>(this IEnumerable<T> source, T item)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
-
-            return source.Concat(item.Create());
-        }
-
-        /// <summary>
-        /// Создает последовательность из 1 объекта.
-        /// </summary>
-        /// <typeparam name="T">Тип.</typeparam>
-        /// <param name="item">Объект.</param>
-        /// <returns></returns>
-        public static IEnumerable<T> Create<T>(this T item)
-        {
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
-
-            yield return item;
-        }
-
-        /// <summary>
-        /// Создает последовательность нужного типа с параметрами конструктора.
-        /// </summary>
-        /// <typeparam name="T">Тип.</typeparam>
-        /// <param name="count">Количество объектов, которые будут созданы в последовательности.</param>
-        /// <param name="ctorArgs">Аргументы конструктора объекта.</param>
-        /// <returns></returns>
-        public static IEnumerable<T> CreateMany<T>(int count, params object[] ctorArgs)
-        {
-            if (count < 0)
-                throw new ArgumentException(nameof(count));
-
-            for (int i = 0; i < count; i++)
-                yield return (T)Activator.CreateInstance(typeof(T), ctorArgs);
-        }
-
-        /// <summary>
-        /// Создает последовательность нужного типа.
-        /// </summary>
-        /// <typeparam name="T">Тип.</typeparam>
-        /// <param name="count">Количество объектов, которые будут созданы в последовательности.</param>
-        /// <returns></returns>
-        public static IEnumerable<T> CreateMany<T>(int count)
-        {
-            if (count < 0)
-                throw new ArgumentException(nameof(count));
-
-            for (int i = 0; i < count; i++)
-                yield return Activator.CreateInstance<T>();
-        }
-
-        /// <summary>
-        /// Выполняет указанное действие с каждым элементом списка.
-        /// </summary>
-        /// <typeparam name="T">Тип элементов source.</typeparam>
-        /// <param name="source">Последовательность значений.</param>
-        /// <param name="action">Делегат, выполняемый для каждого элемента списка.</param>
-        public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (action == null)
-                throw new ArgumentNullException(nameof(action));
-
-            foreach (var item in source)
-                action(item);
-        }
-
-        /// <summary>
-        /// Выполняет указанное действие с каждым элементом списка.
-        /// </summary>
-        /// <typeparam name="T">Тип элементов source.</typeparam>
-        /// <param name="source">Последовательность значений.</param>
-        /// <param name="action">Делегат, выполняемый для каждого элемента списка.</param>
-        public static void ForEach<T>(this IEnumerable<T> source, Action<T, int> action)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (action == null)
-                throw new ArgumentNullException(nameof(action));
-
-            int i = 0;
-            foreach (var item in source)
-                action(item, i++);
-        }
-
-        /// <summary>
-        /// Проецирует каждый элемент всех последовательностей в 1 последовательность.
-        /// </summary>
-        /// <typeparam name="TSource">Тип элементов source.</typeparam>
-        /// <typeparam name="TResult">Тип элементов последовательности, возвращаемой selector.</typeparam>
-        /// <param name="source">Последовательность значений, которые следует проецировать.</param>
-        /// <param name="selector">Функция преобразования, применяемая к каждому элементу.</param>
-        /// <returns></returns>
-        public static IEnumerable<TResult> SelectMany<TSource, TResult>(this IEnumerable<IEnumerable<TSource>> source, Func<TSource, TResult> selector)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (selector == null)
-                throw new ArgumentNullException(nameof(selector));
-
-            foreach (var sub in source)
-                foreach (var item in sub)
-                    yield return selector(item);
-        }
-
-        /// <summary>
-        /// Проецирует каждый элемент всех последовательностей в 1 последовательность.
-        /// </summary>
-        /// <typeparam name="TSource">Тип элементов source.</typeparam>
-        /// <param name="source">Последовательность значений, которые следует проецировать.</param>
-        /// <returns></returns>
-        public static IEnumerable<TSource> SelectMany<TSource>(this IEnumerable<IEnumerable<TSource>> source)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            foreach (var sub in source)
-                foreach (var item in sub)
-                    yield return item;
-        }
-
-        /// <summary>
-        /// Проецирует каждый элемент последовательности в 1 последовательность.
-        /// </summary>
-        /// <typeparam name="TSource">Тип элементов source.</typeparam>
-        /// <param name="source">Последовательность значений, которые следует проецировать.</param>
-        /// <returns></returns>
-        public static IEnumerable<T> SelectMany<T>(this IEnumerable<T> source)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            foreach (var item in source)
-                yield return item;
         }
     }
 }

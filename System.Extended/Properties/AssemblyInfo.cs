@@ -6,12 +6,12 @@ using System.Runtime.InteropServices;
 // набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
 [assembly: AssemblyTitle("System.Extended")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("System.Extended")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("System.Extended")]
 [assembly: AssemblyProduct("System.Extended")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCopyright("Copyright © Alexandr Smirnov 2018")]
+[assembly: AssemblyTrademark("Copyright © Alexandr Smirnov 2018")]
 [assembly: AssemblyCulture("")]
 
 // Установка значения False для параметра ComVisible делает типы в этой сборке невидимыми

@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -10,52 +11,133 @@ namespace System
     public static class StringExtenstion
     {
         /// <summary>
-        /// <c>true</c> - строка пустая, либо состоит из пробелов.
+        /// String check for: empty, spaces, null.
+        /// <para/>
+        /// Проверка строки на: пустоту, пробелы, null.
         /// </summary>
-        /// <param name="str">Строка, которую нужно проверить.</param>
-        /// <returns></returns>
+        /// 
+        /// <param name="str">
+        /// String.
+        /// <para/>
+        /// Строка.
+        /// </param>
         public static bool IsEmpty(this string str) => string.IsNullOrEmpty(str) || string.IsNullOrWhiteSpace(str);
 
         /// <summary>
+        /// Check the string with a regular expression.
+        /// <para/>
         /// Проверка строки регулярным выражением.
         /// </summary>
-        /// <param name="str">Строка, которую нужно проверить.</param>
-        /// <param name="pattern">Паттерн, по которому будет произведена проверка.</param>
-        /// <returns></returns>
-        public static bool IsMatch(this string str, string pattern) => Regex.IsMatch(str, pattern);
-
-        /// <summary>
-        /// Получение хэша по заданному алгоритму.
-        /// </summary>
-        /// <param name="value">Строка, для которой нужно получить хэш значение.</param>
-        /// <param name="hash">Хэш алгоритм.</param>
-        /// <param name="encoding">Кодировка, дефолтное значение: UTF8.</param>
-        /// <returns></returns>
-        public static byte[] GetHash(this string value, HashAlgorithm hash, Encoding encoding = null)
+        /// 
+        /// <param name="str">
+        /// String.
+        /// <para/>
+        /// Строка.
+        /// </param>
+        /// 
+        /// <param name="pattern">
+        /// Regex pattern.
+        /// <para/>
+        /// Паттерн регулярного выражения.
+        /// </param>
+        /// 
+        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="ArgumentException"/>
+        public static bool IsMatch(this string str, string pattern)
         {
-            if (value == null)
-                throw new ArgumentNullException(nameof(value));
+            if (str == null)
+                throw new ArgumentNullException(nameof(str));
+            if (pattern == null)
+                throw new ArgumentNullException(nameof(pattern));
 
-            if (encoding == null)
-                encoding = Encoding.UTF8;
-
-            return encoding.GetBytes(value).GetHash(hash);
+            return Regex.IsMatch(str, pattern);
         }
 
         /// <summary>
-        /// Получение хэша по заданному алгоритму в виде строки.
+        /// Convert string to bytes.
+        /// <para/>
+        /// Получить массив байт из строки.
         /// </summary>
-        /// <param name="value">Строка, для которой нужно получить хэш значение.</param>
-        /// <param name="hash">Хэш алгоритм.</param>
-        /// <param name="encoding">Кодировка, дефолтное значение: UTF8.</param>
-        /// <returns></returns>
-        public static string GetStringHash(this string value, HashAlgorithm hash, Encoding encoding = null, string format = "X2")
+        /// 
+        /// <param name="str">
+        /// String.
+        /// <para/>
+        /// Строка.
+        /// </param>
+        /// 
+        /// <param name="encoding">
+        /// Encoding, default value: UTF8.
+        /// <para/>
+        /// Кодировка, стандартное значение: UTF8.
+        /// </param>
+        /// 
+        /// <exception cref="ArgumentNullException"/>
+        public static byte[] GetBytes(this string str, Encoding encoding = null)
+        {
+            if (str == null)
+                throw new ArgumentNullException(nameof(str));
+
+            encoding = encoding ?? Encoding.UTF8;
+
+            return encoding.GetBytes(str);
+        }
+
+        /// <summary>
+        /// Getting hash from string.
+        /// <para/>
+        /// Получение хэша из строки.
+        /// </summary>
+        /// 
+        /// <param name="str">
+        /// String.
+        /// <para/>
+        /// Строка.
+        /// </param>
+        /// 
+        /// <param name="hash">
+        /// Hash algorithm.
+        /// <para/>
+        /// Хэш алгоритм.
+        /// </param>
+        /// 
+        /// <param name="encoding">
+        /// Encoding, default value: UTF8.
+        /// <para/>
+        /// Кодировка, стандартное значение: UTF8.
+        /// </param>
+        /// 
+        /// <exception cref="ArgumentNullException"/>
+        public static byte[] GetHash(this string str, HashAlgorithm hash, Encoding encoding = null) => str.GetBytes(encoding).GetHash(hash);
+
+        /// <summary>
+        /// Getting hash from string in string format.
+        /// <para/>
+        /// Получение хэша из строки в виде строки.
+        /// </summary>
+        /// 
+        /// <param name="str">
+        /// String.
+        /// <para/>
+        /// Строка.
+        /// </param>
+        /// 
+        /// <param name="hash">
+        /// Hash algorithm.
+        /// <para/>
+        /// Хэш алгоритм.
+        /// </param>
+        /// 
+        /// <param name="encoding">
+        /// Encoding, default value: UTF8.
+        /// <para/>
+        /// Кодировка, стандартное значение: UTF8.
+        /// </param>
+        /// 
+        /// <exception cref="ArgumentNullException"/>
+        public static string GetStringHash(this string str, HashAlgorithm hash, Encoding encoding = null, string format = "X2")
         {
             StringBuilder sb = new StringBuilder();
-            byte[] res = value.GetHash(hash, encoding);
-
-            foreach (var item in res)
-                sb.Append(item.ToString(format));
+            str.GetHash(hash, encoding).ForEach(x => sb.Append(x.ToString(format)));
 
             return sb.ToString();
         }

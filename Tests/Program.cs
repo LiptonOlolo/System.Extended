@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 
@@ -10,8 +11,10 @@ namespace Tests
     {
         static void Main(string[] args)
         {
+            //string a = File.ReadAllText("D:\\test.txt");
+
             Console.WriteLine("Attributes");
-            Test test = new Test(0, 0);
+            Test test = new Test();
             Console.WriteLine(test.GetAttribute<DescriptionAttribute>(null, GetAttributeType.Class).Description);
             Console.WriteLine(test.GetAttribute<DescriptionAttribute>(nameof(Test.A), GetAttributeType.Property).Description);
             Console.WriteLine(test.GetAttribute<DescriptionAttribute>(nameof(Test.B), GetAttributeType.Property).Description);
@@ -20,7 +23,7 @@ namespace Tests
             Console.WriteLine();
 
             Console.WriteLine("Byte");
-            Console.WriteLine(string.Join(" ", Guid.NewGuid().ToByteArray().GetHash(MD5.Create())));
+            Console.WriteLine(Guid.NewGuid().ToByteArray().GetHash(MD5.Create()).Join(" "));
             Console.WriteLine();
 
             Console.WriteLine("String");
@@ -31,23 +34,15 @@ namespace Tests
             Console.WriteLine();
 
             Console.WriteLine("Linq");
-            int local = 0;
-            LinqExtenstion.CreateMany<Test>(5, 0, 0) //5 Test с A = 0 & B = 0
-                          .Pipe(x => { x.A += ++local; x.B++; }) //Добавляем +1 значение св-вам A & B
-                          .ForEach(x => Console.WriteLine($"A = {x.A}, B = {x.B}")); //ForEach используется без .ToList() (!)
-
             Enumerable.Range(0, 5).Append(666).ForEach(Console.WriteLine); //Добавить объект в последовательность
-
-            LinqExtenstion.CreateMany<Test>(4, 0, 0)
-                          .Pipe(x => x.A++) //Каждому св-ву A прибавляем +1
-                          .ForEach(x => Console.WriteLine(x.A));
 
             IEnumerable<int> oneInt = LinqExtenstion.Create(10); //Создаем последовательность из 1 объекта
 
             Console.WriteLine(oneInt.IsEmpty()); //Проверка на наличие элементов.
-            Console.WriteLine((null as int[]).IsNullOrEmpty()); //Проверка на null или наличие элементов.
+            List<int> list = null;
+            Console.WriteLine(list.IsNullOrEmpty()); //Проверка на null или наличие элементов.
             Console.WriteLine(Enumerable.Range(0, 10).Shuffle().Join(",")); //Сортировка в случайном порядке, объединение всей последовательности в одну (новый метод Join).
-            Enumerable.Range(0, 10).Chunk(3).ForEach(x => Console.WriteLine(x.Join(","))); //Генерируем последовательность от 0 до 9, разбиваем на 4 части по 3 эл-та (int[][]).
+            Enumerable.Range(0, 10).Chunk(2).ForEach(x => Console.WriteLine(x.Join(","))); //Генерируем последовательность от 0 до 9, разбиваем на 4 части по 3 эл-та (int[][]).
             Enumerable.Range(0, 10).TakeSkip(1, 1).ForEach(Console.WriteLine); //Берем 1 элемент, после него пропускаем 1 элемент и так до конца последовательности (в данном примере получается каждый 2-ой элемент).
 
             Console.ReadKey();
@@ -57,10 +52,8 @@ namespace Tests
     [Description("Test class")]
     class Test
     {
-        public Test(int a, int b)
+        public Test()
         {
-            A = a;
-            B = b;
         }
 
         [Description("A property")]
